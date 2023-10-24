@@ -38,9 +38,14 @@ class HospitalQueue {
         (patient) => patient?.gender === this.nextGender
       );
 
-      deletePatient = this.queue[index]
-      this.queue.splice(index, 1);
-      
+      if (index !== -1) {
+        deletePatient = this.queue[index];
+        this.queue.splice(index, 1);
+      } else {
+        deletePatient = this.queue[0];
+        this.queue.splice(0, 1);
+      }
+
       this.nextGender = this.nextGender === "M" ? "F" : "M";
     }
     console.log(`send : ${deletePatient?.mrNumber} ${deletePatient?.gender}`);
@@ -73,7 +78,7 @@ rl.on("line", (comandLine) => {
     case "IN":
       if (command.length < 3) {
         console.log("invalid In command.");
-        break
+        break;
       }
       const mrNumber = command[1];
       const gender = command[2].toUpperCase();
@@ -94,8 +99,7 @@ rl.on("line", (comandLine) => {
       queue.setDefault();
       break;
     case "EXIT":
-      process.exit(0)
-      break;
+      process.exit(0);
     default:
       console.log("invalid command line.");
       break;
