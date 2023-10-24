@@ -115,7 +115,6 @@ func main() {
 				Gender:   strings.ToUpper(command[2]),
 			})
 
-			fmt.Println(queue)
 		case "OUT":
 			queue.HandleOut()
 		case "ROUNDROBIN":

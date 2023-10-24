@@ -72,7 +72,8 @@ rl.on("line", (comandLine) => {
   switch (command[0].toUpperCase()) {
     case "IN":
       if (command.length < 3) {
-        console.log("invalid In command");
+        console.log("invalid In command.");
+        break
       }
       const mrNumber = command[1];
       const gender = command[2].toUpperCase();
