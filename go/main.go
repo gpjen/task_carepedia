@@ -15,7 +15,7 @@ type Patient struct {
 type HospitalQueue struct {
 	Queue      []Patient
 	Order      string
-	LastGender string
+	nextGender string
 }
 
 func (h *HospitalQueue) isDuplicateMRNumber(mrNumber string) bool {
@@ -47,16 +47,32 @@ func (h *HospitalQueue) HandleOut() {
 		return
 	}
 
+	patientOut := ""
+
 	if h.Order == "default" {
-		patient := fmt.Sprintf("%s %s", h.Queue[0].MRnumber, h.Queue[0].Gender)
-		fmt.Println(patient)
+		patientOut = fmt.Sprintf("%s %s", h.Queue[0].MRnumber, h.Queue[0].Gender)
 		h.Queue = h.Queue[1:]
 
 	} else if h.Order == "roudRobin" {
-		// for _, v := range v {
-
-		// }
+		for i, patient := range h.Queue {
+			if patient.Gender == h.nextGender {
+				nextGender := "M"
+				if h.nextGender == "M" {
+					nextGender = "F"
+				}
+				h.nextGender = nextGender
+				patientOut = fmt.Sprintf("%s %s", patient.MRnumber, patient.Gender)
+				h.Queue = append(h.Queue[:i], h.Queue[i+1:]...)
+				break
+			}
+		}
+		if patientOut == "" {
+			patientOut = fmt.Sprintf("%s %s", h.Queue[0].MRnumber, h.Queue[0].Gender)
+			h.Queue = h.Queue[1:]
+		}
 	}
+
+	fmt.Printf("send : %s\n", patientOut)
 }
 
 func (h *HospitalQueue) HandleRRobin() {
@@ -73,7 +89,7 @@ func main() {
 	queue := HospitalQueue{
 		Queue:      []Patient{},
 		Order:      "default",
-		LastGender: "F",
+		nextGender: "F",
 	}
 
 	reader := bufio.NewReader(os.Stdin)
@@ -107,7 +123,6 @@ func main() {
 		case "DEFAULT":
 			queue.HandleDefault()
 		case "EXIT":
-			fmt.Println("case EXIT")
 			return
 		default:
 			fmt.Println("Invalid command.")
